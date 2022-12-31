@@ -39,6 +39,7 @@ app.get("/api/loadtoDos",  async (req,res)=>{
     try{
        const toDos = await toDo.find();
         const toDoList= JSON.stringify(toDos);
+        console.log(toDoList);
        res.send(toDoList);
     }
 
