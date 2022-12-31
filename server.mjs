@@ -18,7 +18,7 @@ app.use(express.json({limit:'1mb'}));
 
 
 app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', "https://todo-app-backend-a4kl.onrender.com" );
+    res.setHeader('Access-Control-Allow-Origin', "https://todo-app-frontend-obe0.onrender.com" );
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     res.setHeader('Access-Control-Allow-Credentials', true);
