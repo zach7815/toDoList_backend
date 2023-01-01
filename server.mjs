@@ -1,20 +1,24 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
 import express, { urlencoded } from "express";
-// import cors from 'cors';
-import mongoose from "mongoose";
-import toDo from "./toDo.mjs";
-
-const connectionString= process.env.CONNECTION_STRING;
-
+import mongoose, {Schema} from "mongoose";
 
 
 const app = express();
+const connectionString= process.env.CONNECTION_STRING;
+
+mongoose.set('strictQuery', false);
+
+const toDoSchema=  new Schema({
+    id:Number,
+    text:String,
+    complete:Boolean
+});
+
 
 app.use(urlencoded({extended:true}));
 app.use(express.static('public'));
 app.use(express.json({limit:'1mb'}));
-// app.use(cors);
 
 
 app.use(function (req, res, next) {
@@ -31,27 +35,34 @@ app.use(function (req, res, next) {
 const PORT = process.env.PORT || 8000;
 
 
-main().catch(err => console.log(err));
+main();
+
 async function main() {
-    await mongoose.connect(connectionString,
-    ()=>{ console.log("MongoDB connected");},
-    (e)=>{console.log({error:e.message})}
-    );
+    try{
+        await mongoose.connect(connectionString);
+         await mongoose.model("toDo", toDoSchema);
+
+
+    }
+
+    catch(error){
+        console.log(error);
+    }
   };
-
-
+    main();
+    const toDo= await mongoose.model("toDo", toDoSchema);
 
 
 
 app.get("/", (req,res)=>{
-    res.send("This is a backend route please go localHost: 3000");
+    res.send("This is a backend route please go to the front end");
 })
 
 app.get("/api/loadtoDos",  async (req,res)=>{
     try{
        const toDos = await toDo.find();
+       console.log(toDos);
         const toDoList= JSON.stringify(toDos);
-        console.log(toDoList);
        res.send(toDoList);
     }
 
@@ -81,8 +92,6 @@ app.get("/api/loadtoDos",  async (req,res)=>{
     app.delete("/api/deleteComplete", async (req,res)=>{
         try{
            await toDo.deleteMany({complete:true});
-
-            const toDos = await toDo.find();
         }
 
         catch(error){
